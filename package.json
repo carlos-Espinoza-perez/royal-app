@@ -14,7 +14,12 @@
   "type": "module",
   "dependencies": {
     "@vitejs/plugin-react": "^6.0.2",
+    "@yudiel/react-qr-scanner": "^2.6.0",
+    "framer-motion": "^12.40.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.17.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.17.0",

@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
-import { BadgeDollarSign, BookOpen, IdCard, LayoutDashboard, ScrollText } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
+import { ArrowLeft, BadgeDollarSign, BookOpen, IdCard, LayoutDashboard, ScrollText, Bell, Moon, Sun } from 'lucide-react'
+import { useTheme } from '../contexts/ThemeContext'
 
 const navItems = [
   { to: '/admin', label: 'Panel', icon: LayoutDashboard, end: true },
@@ -8,15 +9,29 @@ const navItems = [
   { to: '/admin/carnets', label: 'Carnets', icon: IdCard },
 ]
 
-export default function AdminShell({ title, eyebrow, children, actions }) {
+export default function AdminShell({ title, eyebrow, children, actions, backTo }) {
+  const { theme, toggleTheme } = useTheme()
+
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
-        <div className="brand-mark">
-          <BadgeDollarSign size={24} />
-          <div>
-            <strong>Royal Treasury</strong>
-            <span>Administracion</span>
+        <div className="user-greeting-header">
+          <div className="user-greeting-profile">
+            <div className="user-avatar">
+              <span>AD</span>
+            </div>
+            <div className="user-greeting-text">
+              <span className="greeting-eyebrow">Hola de nuevo</span>
+              <strong className="greeting-name">Administrador</strong>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="icon-button" aria-label="Cambiar Tema" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            <button className="icon-button" aria-label="Notificaciones">
+              <Bell size={20} />
+            </button>
           </div>
         </div>
         <nav className="admin-nav" aria-label="Navegacion admin">
@@ -33,9 +48,16 @@ export default function AdminShell({ title, eyebrow, children, actions }) {
       </aside>
       <section className="admin-content">
         <header className="admin-header">
-          <div>
-            <span>{eyebrow}</span>
-            <h1>{title}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {backTo && (
+              <Link to={backTo} className="icon-button" style={{ color: 'var(--text)' }} aria-label="Volver">
+                <ArrowLeft size={24} />
+              </Link>
+            )}
+            <div>
+              <span>{eyebrow}</span>
+              <h1>{title}</h1>
+            </div>
           </div>
           {actions ? <div className="admin-actions">{actions}</div> : null}
         </header>

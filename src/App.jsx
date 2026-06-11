@@ -6,6 +6,7 @@ import AdminStudentsPage from './pages/AdminStudentsPage.jsx'
 import AdminStudentDetailPage from './pages/AdminStudentDetailPage.jsx'
 import AdminTransactionsPage from './pages/AdminTransactionsPage.jsx'
 import AdminCardsPage from './pages/AdminCardsPage.jsx'
+import AdminScannerPage from './pages/AdminScannerPage.jsx'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/admin/alumnos/:id" element={<AdminStudentDetailPage />} />
       <Route path="/admin/transacciones" element={<AdminTransactionsPage />} />
       <Route path="/admin/carnets" element={<AdminCardsPage />} />
+      <Route path="/admin/escaner" element={<AdminScannerPage />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )

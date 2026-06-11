@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Crown, KeyRound, Mail, Shield } from 'lucide-react'
-import GuillocheBackground from '../components/GuillocheBackground.jsx'
-import RoyalFrame from '../components/RoyalFrame.jsx'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('maestro@royaltreasury.app')
+  const [focused, setFocused] = useState('')
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -15,43 +14,233 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-      <GuillocheBackground variant="dark" />
-      <section className="login-hero">
-        <div className="crest">
-          <Crown size={28} />
-          <Shield size={44} />
-        </div>
-        <span className="eyebrow">Acceso reservado</span>
-        <h1>Royal Treasury</h1>
-        <p>Administracion oficial de royales, rangos y carnets del grupo de adolescentes.</p>
-      </section>
 
-      <RoyalFrame className="login-card" tone="dark">
-        <form onSubmit={handleSubmit}>
-          <div className="form-heading">
-            <span>Maestro administrador</span>
-            <h2>Entrar al tesoro</h2>
+      {/* Decorative top accent line */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        height: '3px',
+        background: 'linear-gradient(90deg, transparent, var(--accent-500), transparent)'
+      }} />
+
+      <div style={{
+        position: 'relative', zIndex: 1,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        gap: '2rem', padding: '1.5rem 1rem',
+        maxWidth: '420px', margin: '0 auto',
+        animation: 'slideUp 500ms cubic-bezier(0.16,1,0.3,1) both'
+      }}>
+
+        {/* Crest */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem'
+        }}>
+          <div style={{
+            width: '80px', height: '80px',
+            display: 'grid', placeItems: 'center',
+            borderRadius: '24px',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.16)',
+            boxShadow: '0 0 40px rgba(185,141,69,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
+            color: 'var(--accent-100)',
+            position: 'relative'
+          }}>
+            <Shield size={40} strokeWidth={1.5} />
+            <Crown size={20} style={{ position: 'absolute', top: '-10px', color: 'var(--accent-500)' }} />
           </div>
-          <label>
-            Correo
-            <span className="input-shell">
-              <Mail size={18} />
-              <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" />
+
+          <div style={{ textAlign: 'center', color: '#fff' }}>
+            <span style={{
+              display: 'block',
+              fontFamily: "'Cinzel', serif",
+              fontSize: '0.65rem',
+              fontWeight: 600,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--accent-500)',
+              marginBottom: '0.4rem'
+            }}>
+              Acceso reservado
             </span>
-          </label>
-          <label>
-            Contrasena
-            <span className="input-shell">
-              <KeyRound size={18} />
-              <input defaultValue="royales-demo" type="password" />
-            </span>
-          </label>
-          <button className="royal-button royal-button--gold" type="submit">
-            Ingresar
-          </button>
-          <small>Ingreso simulado para esta primera version con datos mock.</small>
-        </form>
-      </RoyalFrame>
+            <h1 style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: 'clamp(1.8rem, 8vw, 2.6rem)',
+              fontWeight: 700,
+              lineHeight: 1.1,
+              letterSpacing: '0.04em',
+              background: 'linear-gradient(135deg, #fff 40%, var(--accent-100))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>Royal Treasury</h1>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: '1rem',
+              fontStyle: 'italic',
+              color: 'rgba(255,255,255,0.65)',
+              marginTop: '0.5rem',
+              lineHeight: 1.5
+            }}>
+              Administración oficial de Royales, rangos y carnets
+            </p>
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <div style={{
+          width: '100%',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: '20px',
+          padding: '1.75rem 1.5rem',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+        }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <span style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: '0.6rem',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--accent-500)',
+              display: 'block',
+              marginBottom: '0.25rem'
+            }}>Maestro administrador</span>
+            <h2 style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: '1.3rem',
+              fontWeight: 600,
+              color: '#fff',
+              letterSpacing: '0.03em'
+            }}>Entrar al Tesoro</h2>
+          </div>
+
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
+
+            {/* Email field */}
+            <label style={{ display: 'grid', gap: '0.4rem' }}>
+              <span style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.65rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.7)',
+                fontWeight: 600
+              }}>Correo</span>
+              <span style={{
+                minHeight: '48px',
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                border: `1px solid ${focused === 'email' ? 'var(--accent-500)' : 'rgba(255,255,255,0.18)'}`,
+                borderRadius: '12px',
+                padding: '0 1rem',
+                background: 'rgba(255,255,255,0.07)',
+                transition: 'border-color 200ms, box-shadow 200ms',
+                boxShadow: focused === 'email' ? '0 0 0 3px rgba(185,141,69,0.2)' : 'none'
+              }}>
+                <Mail size={16} color={focused === 'email' ? 'var(--accent-500)' : 'rgba(255,255,255,0.4)'} style={{ flexShrink: 0, transition: 'color 200ms' }} />
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocused('email')}
+                  onBlur={() => setFocused('')}
+                  type="email"
+                  style={{
+                    width: '100%', border: 0, outline: 0,
+                    background: 'transparent', color: '#fff',
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: '1rem'
+                  }}
+                />
+              </span>
+            </label>
+
+            {/* Password field */}
+            <label style={{ display: 'grid', gap: '0.4rem' }}>
+              <span style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.65rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.7)',
+                fontWeight: 600
+              }}>Contraseña</span>
+              <span style={{
+                minHeight: '48px',
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                border: `1px solid ${focused === 'pass' ? 'var(--accent-500)' : 'rgba(255,255,255,0.18)'}`,
+                borderRadius: '12px',
+                padding: '0 1rem',
+                background: 'rgba(255,255,255,0.07)',
+                transition: 'border-color 200ms, box-shadow 200ms',
+                boxShadow: focused === 'pass' ? '0 0 0 3px rgba(185,141,69,0.2)' : 'none'
+              }}>
+                <KeyRound size={16} color={focused === 'pass' ? 'var(--accent-500)' : 'rgba(255,255,255,0.4)'} style={{ flexShrink: 0, transition: 'color 200ms' }} />
+                <input
+                  defaultValue="royales-demo"
+                  onFocus={() => setFocused('pass')}
+                  onBlur={() => setFocused('')}
+                  type="password"
+                  style={{
+                    width: '100%', border: 0, outline: 0,
+                    background: 'transparent', color: '#fff',
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: '1rem'
+                  }}
+                />
+              </span>
+            </label>
+
+            {/* Submit */}
+            <button
+              className="royal-button royal-button--gold"
+              type="submit"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                marginTop: '0.5rem',
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.85rem',
+                letterSpacing: '0.1em',
+                minHeight: '52px'
+              }}
+            >
+              Ingresar al Tesoro
+            </button>
+
+            {/* Divider */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: 'rgba(255,255,255,0.3)'
+            }}>
+              <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+              <small style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontStyle: 'italic',
+                fontSize: '0.8rem',
+                color: 'rgba(255,255,255,0.4)'
+              }}>
+                Demo con datos de prueba
+              </small>
+              <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+            </div>
+
+          </form>
+        </div>
+
+        {/* Footer stamp */}
+        <p style={{
+          fontFamily: "'Cinzel', serif",
+          fontSize: '0.6rem',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.25)',
+          textAlign: 'center'
+        }}>
+          Honra · Fe · Servicio · Generosidad
+        </p>
+
+      </div>
     </main>
   )
 }
+

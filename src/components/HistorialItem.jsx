@@ -13,12 +13,17 @@ const labelMap = {
   canjear: 'Canjeado',
 }
 
-export default function HistorialItem({ transaccion }) {
+export default function HistorialItem({ transaccion, onClick }) {
   const Icon = iconMap[transaccion.tipo] ?? ArrowUpCircle
   const isPositive = transaccion.tipo === 'acreditar'
 
   return (
-    <article className={`history-item ${isPositive ? 'is-positive' : 'is-negative'}`}>
+    <article 
+      className={`history-item ${isPositive ? 'is-positive' : 'is-negative'}`}
+      onClick={onClick}
+      style={onClick ? { cursor: 'pointer' } : {}}
+      role={onClick ? 'button' : undefined}
+    >
       <div className="history-icon">
         <Icon size={18} />
       </div>
