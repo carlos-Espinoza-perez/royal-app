@@ -127,6 +127,30 @@ export function SupabaseDataProvider({ children }) {
     return data;
   };
 
+  const editAlumno = async (id, newNombre) => {
+    const { error } = await supabase
+      .from('alumnos')
+      .update({ nombre: newNombre })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error editing alumno:', error);
+      throw error;
+    }
+  };
+
+  const deleteAlumno = async (id) => {
+    const { error } = await supabase
+      .from('alumnos')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting alumno:', error);
+      throw error;
+    }
+  };
+
   const addTransaccion = async (alumnoId, tipo, monto, motivo, premioId = null) => {
     // The DB trigger handles the balance update, we just insert the tx
     const { data, error } = await supabase
@@ -244,7 +268,9 @@ export function SupabaseDataProvider({ children }) {
       premios, 
       asistencia, 
       loading,
-      addAlumno, 
+      addAlumno,
+      editAlumno,
+      deleteAlumno,
       addTransaccion, 
       deleteTransaccion, 
       editTransaccion,
