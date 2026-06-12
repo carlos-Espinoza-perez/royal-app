@@ -222,6 +222,21 @@ export function SupabaseDataProvider({ children }) {
     if (error) throw error;
   };
 
+  const addVisita = async (fecha, nombreVisita) => {
+    const { error } = await supabase
+      .from('asistencia')
+      .insert([{ fecha, nombre_visita: nombreVisita, presente: true }]);
+    if (error) throw error;
+  };
+
+  const removeVisita = async (id) => {
+    const { error } = await supabase
+      .from('asistencia')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  };
+
   return (
     <SupabaseDataContext.Provider value={{ 
       alumnos, 
@@ -236,7 +251,9 @@ export function SupabaseDataProvider({ children }) {
       addPremio,
       editPremio,
       deletePremio,
-      saveAsistencia
+      saveAsistencia,
+      addVisita,
+      removeVisita
     }}>
       {children}
     </SupabaseDataContext.Provider>

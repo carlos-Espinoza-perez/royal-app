@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import LoginPage from './pages/LoginPage.jsx'
 import StudentPublicPage from './pages/StudentPublicPage.jsx'
 import AdminDashboardPage from './pages/AdminDashboardPage.jsx'
@@ -14,8 +15,11 @@ import AdminSettingsPage from './pages/AdminSettingsPage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 export default function App() {
+  const location = useLocation()
+
   return (
-    <Routes>
+    <AnimatePresence>
+      <Routes location={location} key={location.pathname}>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/alumno/:id" element={<StudentPublicPage />} />
@@ -34,6 +38,7 @@ export default function App() {
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+      </Routes>
+    </AnimatePresence>
   )
 }

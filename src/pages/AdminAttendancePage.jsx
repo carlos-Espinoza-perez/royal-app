@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Save, CheckCircle2, Circle } from 'lucide-react'
+import { Calendar, Save, CheckCircle2, Circle, Trash2, UserPlus } from 'lucide-react'
 import AdminShell from '../layouts/AdminShell.jsx'
 import RoyalFrame from '../components/RoyalFrame.jsx'
 import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 import { useToast } from '../contexts/ToastContext.jsx'
 
 export default function AdminAttendancePage() {
-  const { alumnos, asistencia, saveAsistencia } = useSupabaseData()
+  const { alumnos, asistencia, saveAsistencia, addVisita, removeVisita } = useSupabaseData()
   const { showToast } = useToast()
 
   // Set default to today's date in local YYYY-MM-DD
@@ -14,6 +14,8 @@ export default function AdminAttendancePage() {
   const [selectedDate, setSelectedDate] = useState(today)
   const [attendanceState, setAttendanceState] = useState({})
   const [isSaving, setIsSaving] = useState(false)
+  const [newVisitaName, setNewVisitaName] = useState('')
+  const [isAddingVisita, setIsAddingVisita] = useState(false)
 
   // Solo mostrar alumnos activos
   const activeAlumnos = alumnos.filter(a => a.activo).sort((a, b) => a.nombre.localeCompare(b.nombre))
@@ -31,6 +33,9 @@ export default function AdminAttendancePage() {
     
     setAttendanceState(newState)
   }, [selectedDate, asistencia, alumnos])
+
+  const recordsForDate = asistencia.filter(a => a.fecha === selectedDate)
+  const visitas = recordsForDate.filter(a => !a.alumno_id)
 
   const toggleStudent = (id) => {
     setAttendanceState(prev => ({
@@ -63,11 +68,38 @@ export default function AdminAttendancePage() {
     }
   }
 
-  const presentCount = Object.values(attendanceState).filter(Boolean).length
-  const totalCount = activeAlumnos.length
+  const handleAddVisita = async (e) => {
+    e.preventDefault()
+    if (!newVisitaName.trim()) return
+    setIsAddingVisita(true)
+    try {
+      await addVisita(selectedDate, newVisitaName.trim())
+      setNewVisitaName('')
+      showToast('Visita registrada', 'success')
+    } catch (err) {
+      console.error(err)
+      showToast('Error al registrar visita', 'error')
+    } finally {
+      setIsAddingVisita(false)
+    }
+  }
+
+  const handleDeleteVisita = async (id) => {
+    if (!window.confirm('¿Eliminar esta visita?')) return
+    try {
+      await removeVisita(id)
+      showToast('Visita eliminada', 'success')
+    } catch (err) {
+      console.error(err)
+      showToast('Error al eliminar', 'error')
+    }
+  }
+
+  const presentCount = Object.values(attendanceState).filter(Boolean).length + visitas.length
+  const totalCount = activeAlumnos.length + visitas.length
 
   return (
-    <AdminShell backTo="/admin/ajustes" 
+    <AdminShell 
       title="Pase de Lista" 
       eyebrow="Control de Asistencia"
     >
@@ -159,10 +191,10 @@ export default function AdminAttendancePage() {
             alignItems: 'center'
           }}>
             <span style={{ fontWeight: 600, color: 'var(--primary-900)' }}>
-              Alumnos ({totalCount})
+              Lista Oficial ({activeAlumnos.length})
             </span>
             <span style={{ fontSize: '0.85rem', color: 'var(--primary-700)' }}>
-              Asistencias marcadas: <strong>{presentCount}</strong>
+              Total presentes: <strong>{presentCount}</strong>
             </span>
           </div>
 
@@ -201,6 +233,70 @@ export default function AdminAttendancePage() {
                 No hay alumnos activos para mostrar.
               </div>
             )}
+          </div>
+          
+          {/* SECCIÓN VISITAS TEMPORALES */}
+          <div style={{ 
+            padding: '1rem 1.25rem', 
+            background: 'color-mix(in srgb, var(--accent-500) 10%, transparent)', 
+            borderTop: '1px solid var(--line)',
+            borderBottom: '1px solid var(--line)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <span style={{ fontWeight: 800, color: 'var(--accent-700)' }}>
+              Visitas Temporales ({visitas.length})
+            </span>
+          </div>
+          
+          <div style={{ display: 'grid' }}>
+            {visitas.map((visita, index) => (
+              <div 
+                key={visita.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderBottom: '1px solid var(--line)',
+                  background: 'var(--surface)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <CheckCircle2 size={24} color="var(--accent-500)" />
+                  <div style={{ display: 'grid' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text)' }}>{visita.nombre_visita}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Visita / Invitado</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleDeleteVisita(visita.id)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '0.5rem' }}
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            ))}
+            
+            <form onSubmit={handleAddVisita} style={{ display: 'flex', gap: '0.5rem', padding: '1rem 1.25rem', background: 'var(--background)' }}>
+              <input 
+                type="text" 
+                placeholder="Nombre de la visita..."
+                value={newVisitaName}
+                onChange={e => setNewVisitaName(e.target.value)}
+                style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', fontSize: '0.9rem' }}
+              />
+              <button 
+                type="submit" 
+                disabled={isAddingVisita || !newVisitaName.trim()}
+                style={{ 
+                  background: 'var(--accent-500)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', padding: '0 1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' 
+                }}
+              >
+                <UserPlus size={16} /> Añadir
+              </button>
+            </form>
           </div>
         </RoyalFrame>
 

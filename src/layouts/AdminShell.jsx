@@ -3,10 +3,12 @@ import { ArrowLeft, BadgeDollarSign, BookOpen, IdCard, LayoutDashboard, ScrollTe
 import { useTheme } from '../contexts/ThemeContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 const navItems = [
   { to: '/admin', label: 'Panel', icon: LayoutDashboard, end: true },
   { to: '/admin/alumnos', label: 'Alumnos', icon: BookOpen },
+  { to: '/admin/asistencia', label: 'Asistencia', icon: ClipboardCheck },
   { to: '/admin/ajustes', label: 'Ajustes', icon: Settings },
 ]
 
@@ -21,7 +23,14 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
   }
 
   return (
-    <main className="admin-shell">
+    <motion.main 
+      className="admin-shell"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+    >
       <aside className="admin-sidebar">
         <div className="user-greeting-header">
           <div className="user-greeting-profile">
@@ -33,7 +42,7 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
               <strong className="greeting-name">{user?.email?.split('@')[0] || 'Administrador'}</strong>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="desktop-top-right">
             <button className="icon-button" aria-label="Cambiar Tema" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -71,6 +80,6 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
         </header>
         {children}
       </section>
-    </main>
+    </motion.main>
   )
 }

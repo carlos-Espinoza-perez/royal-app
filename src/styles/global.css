@@ -1292,3 +1292,109 @@ a.student-admin-row:hover {
   color: var(--muted);
   opacity: 0.6;
 }
+
+/* =========================================================================
+   RESPONSIVE DESKTOP LAYOUT (min-width: 980px)
+   ========================================================================= */
+@media (min-width: 980px) {
+  .admin-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: 100vh;
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+
+  .admin-sidebar {
+    position: static;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-xl) var(--space-lg);
+    background: var(--surface);
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .user-greeting-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .user-greeting-profile {
+    width: 100%;
+  }
+
+  .admin-nav {
+    position: static;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    margin-top: var(--space-xl);
+    padding: 0;
+    gap: 0.5rem;
+  }
+
+  .admin-nav a {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0.85rem 1rem;
+    font-size: var(--text-sm);
+    border-radius: var(--radius-sm);
+    min-height: auto;
+  }
+
+  .admin-nav a svg {
+    margin-right: 0.75rem;
+  }
+
+  .admin-content {
+    height: 100vh;
+    overflow-y: auto;
+    padding: var(--space-2xl) 2rem;
+  }
+  
+  /* Contenedor central para que no se estire demasiado en pantallas gigantes */
+  .admin-content > * {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .admin-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .admin-actions {
+    justify-content: flex-end;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .desktop-top-right {
+    position: fixed;
+    top: 1.5rem;
+    right: 2rem;
+    z-index: 50;
+  }
+}
+
+.desktop-top-right {
+  display: flex;
+  gap: 8px;
+}
+

@@ -34,11 +34,11 @@ export default function AdminDashboardPage() {
         <StatSeal label="Hoy" value={stats.transaccionesHoy} detail="Movimientos" />
       </section>
 
-      <div style={{ margin: 'var(--space-md) 0' }}>
+      <div style={{ margin: 'var(--space-md) 0', display: 'flex', justifyContent: 'center' }}>
         <Link 
           to="/admin/escaner" 
           className="royal-button royal-button--gold" 
-          style={{ width: '100%', padding: '1.25rem', fontSize: '1.2rem', justifyContent: 'center', boxShadow: '0 8px 16px rgba(212, 175, 55, 0.2)' }}
+          style={{ width: '100%', maxWidth: '400px', padding: '1.25rem', fontSize: '1.2rem', justifyContent: 'center', boxShadow: '0 8px 16px rgba(212, 175, 55, 0.2)' }}
         >
           <QrCode size={24} style={{ marginRight: '0.5rem' }} /> Escanear Pase Rápido
         </Link>

@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+
+const MotionLink = motion.create ? motion.create(Link) : motion(Link)
 import { Search, UserPlus } from 'lucide-react'
 import AdminShell from '../layouts/AdminShell.jsx'
 import RoyalFrame from '../components/RoyalFrame.jsx'
@@ -49,7 +52,13 @@ export default function AdminStudentsPage() {
         </label>
         <div className="student-admin-list">
           {filteredAlumnos.map((alumno) => (
-            <Link className="student-admin-row" to={`/admin/alumnos/${alumno.id}`} key={alumno.id}>
+            <MotionLink 
+              layoutId={`student-card-${alumno.id}`} 
+              className="student-admin-row" 
+              to={`/admin/alumnos/${alumno.id}`} 
+              key={alumno.id}
+              style={{ textDecoration: 'none' }}
+            >
               <div className="avatar-small">{alumno.nombre.slice(0, 1)}</div>
               <div>
                 <strong>{alumno.nombre}</strong>
@@ -57,7 +66,7 @@ export default function AdminStudentsPage() {
                 <RangoInsignia rango={getRangoBySaldo(alumno.saldo)} />
               </div>
               <b>{formatRoyales(alumno.saldo)}</b>
-            </Link>
+            </MotionLink>
           ))}
           {filteredAlumnos.length === 0 && (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>

@@ -1,0 +1,9 @@
+{
+  "name": "royal-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
