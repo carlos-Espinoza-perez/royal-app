@@ -35,7 +35,8 @@ export default function AdminStudentDetailPage() {
 
   const handleOpenQR = async () => {
     try {
-      const url = await QRCodeGenerator.toDataURL(alumno.numero, {
+      const publicUrl = `${window.location.origin}/alumno/${alumno.id}`
+      const url = await QRCodeGenerator.toDataURL(publicUrl, {
         width: 300,
         margin: 2,
         color: { dark: '#0A1F24', light: '#ffffff' }
