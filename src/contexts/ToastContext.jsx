@@ -7,9 +7,10 @@ export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
 
   const showToast = useCallback((message, type = 'success') => {
-    setToast({ message, type, id: Date.now() });
+    const id = Date.now();
+    setToast({ message, type, id });
     setTimeout(() => {
-      setToast((current) => current?.id === toast?.id ? null : current);
+      setToast((current) => current?.id === id ? null : current);
     }, 3000);
   }, []);
 

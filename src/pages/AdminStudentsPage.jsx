@@ -6,12 +6,12 @@ import RoyalFrame from '../components/RoyalFrame.jsx'
 import RangoInsignia from '../components/RangoInsignia.jsx'
 import { getRangoBySaldo } from '../data/mockData.js'
 import { formatRoyales } from '../utils/formatters.js'
-import { useMockData } from '../contexts/MockDataContext.jsx'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 import { useToast } from '../contexts/ToastContext.jsx'
 import Modal from '../components/Modal.jsx'
 
 export default function AdminStudentsPage() {
-  const { alumnos, addAlumno } = useMockData()
+  const { alumnos, addAlumno, loading } = useSupabaseData()
   const { showToast } = useToast()
   
   const [searchTerm, setSearchTerm] = useState('')
@@ -33,7 +33,7 @@ export default function AdminStudentsPage() {
   }
 
   return (
-    <AdminShell 
+    <AdminShell backTo="/admin" 
       title="Gestion de alumnos" 
       eyebrow="Registro real" 
       actions={<button className="royal-button" onClick={() => setIsModalOpen(true)}><UserPlus size={16} /> Nuevo</button>}

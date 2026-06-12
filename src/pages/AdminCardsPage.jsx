@@ -1,17 +1,25 @@
-import { useState, useRef } from 'react'
-import { Download, Upload, CheckCircle2, Circle } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Download, Upload, CheckCircle2, Circle, SlidersHorizontal } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import AdminShell from '../layouts/AdminShell.jsx'
 import RoyalFrame from '../components/RoyalFrame.jsx'
 import CarnetPreview from '../components/CarnetPreview.jsx'
-import { alumnos as initialAlumnos } from '../data/mockData.js'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 
 export default function AdminCardsPage() {
   const [baseImage, setBaseImage] = useState('/carnet-bg.jpg')
-  const [selectedAlumnos, setSelectedAlumnos] = useState(
-    initialAlumnos.reduce((acc, a) => ({ ...acc, [a.id]: a.activo }), {})
-  )
+  const { alumnos, loading } = useSupabaseData()
+  const [selectedAlumnos, setSelectedAlumnos] = useState({})
+  const navigate = useNavigate()
+
+  // Sync selected state when alumnos load
+  useEffect(() => {
+    if (alumnos.length > 0 && Object.keys(selectedAlumnos).length === 0) {
+      setSelectedAlumnos(alumnos.reduce((acc, a) => ({ ...acc, [a.id]: a.activo }), {}))
+    }
+  }, [alumnos])
   const [isGenerating, setIsGenerating] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [modalIdx, setModalIdx] = useState(0)
@@ -31,8 +39,8 @@ export default function AdminCardsPage() {
   }
 
   const toggleAll = () => {
-    const allSelected = initialAlumnos.every(a => selectedAlumnos[a.id])
-    const newState = initialAlumnos.reduce((acc, a) => ({ ...acc, [a.id]: !allSelected }), {})
+    const allSelected = alumnos.every(a => selectedAlumnos[a.id])
+    const newState = alumnos.reduce((acc, a) => ({ ...acc, [a.id]: !allSelected }), {})
     setSelectedAlumnos(newState)
   }
 
@@ -40,7 +48,7 @@ export default function AdminCardsPage() {
     // We no longer require the user to manually upload an image.
     // If they did not upload one, it will use /carnet-bg.jpg by default.
     
-    const alumnosToGenerate = initialAlumnos.filter(a => selectedAlumnos[a.id])
+    const alumnosToGenerate = alumnos.filter(a => selectedAlumnos[a.id])
     if (alumnosToGenerate.length === 0) return alert("Selecciona al menos un alumno.")
 
     setIsGenerating(true)
@@ -110,7 +118,7 @@ export default function AdminCardsPage() {
   }
 
   const selectedCount = Object.values(selectedAlumnos).filter(Boolean).length
-  const selectedList = initialAlumnos.filter(a => selectedAlumnos[a.id])
+  const selectedList = alumnos.filter(a => selectedAlumnos[a.id])
 
   const openModal = () => { setModalIdx(0); setShowModal(true) }
   const closeModal = () => setShowModal(false)
@@ -118,7 +126,7 @@ export default function AdminCardsPage() {
   const nextCard = () => setModalIdx(i => Math.min(selectedList.length - 1, i + 1))
 
   return (
-    <AdminShell title="Generador de carnets" eyebrow="Identificación oficial">
+    <AdminShell backTo="/admin/ajustes" title="Generador de carnets" eyebrow="Identificación oficial">
       {/* Hidden container for PDF rendering */}
       <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', pointerEvents: 'none' }}>
         <div ref={previewContainerRef} style={{ display: 'flex', gap: '20px' }}>
@@ -194,7 +202,7 @@ export default function AdminCardsPage() {
           </div>
 
           <div className="checkbox-list" style={{ maxHeight: '480px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-            {initialAlumnos.map((alumno) => (
+            {alumnos.map((alumno) => (
               <label
                 key={alumno.id}
                 style={{
@@ -248,6 +256,17 @@ export default function AdminCardsPage() {
             >
               {isGenerating ? <Circle size={16} className="lucide-spin" /> : <Download size={16} />}
               {isGenerating ? 'Generando...' : 'Descargar PDF'}
+            </button>
+
+            <hr style={{ border: 'none', borderTop: '1px solid var(--line)', margin: '0.5rem 0' }} />
+
+            <button
+              className="royal-button"
+              onClick={() => navigate('/admin/carnets/editor')}
+              style={{ width: '100%', justifyContent: 'center', background: 'transparent', border: '1px solid var(--line)', color: 'var(--muted)' }}
+            >
+              <SlidersHorizontal size={16} />
+              Configurar Plantilla
             </button>
           </div>
         </RoyalFrame>

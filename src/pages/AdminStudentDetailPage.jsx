@@ -10,13 +10,13 @@ import AcreditarForm from '../components/AcreditarForm.jsx'
 import TransactionDetailModal from '../components/TransactionDetailModal.jsx'
 import { getRangoBySaldo } from '../data/mockData.js'
 import { formatRoyales } from '../utils/formatters.js'
-import { useMockData } from '../contexts/MockDataContext.jsx'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 import { useToast } from '../contexts/ToastContext.jsx'
 import QRCodeGenerator from 'qrcode'
 
 export default function AdminStudentDetailPage() {
   const { id } = useParams()
-  const { alumnos, transacciones: allTransacciones, addTransaccion } = useMockData()
+  const { alumnos, transacciones: allTransacciones, addTransaccion, loading } = useSupabaseData()
   const { showToast } = useToast()
 
   const [activeModal, setActiveModal] = useState(null)

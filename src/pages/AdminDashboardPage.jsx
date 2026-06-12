@@ -6,10 +6,10 @@ import RangoInsignia from '../components/RangoInsignia.jsx'
 import StatSeal from '../components/StatSeal.jsx'
 import { getRangoBySaldo } from '../data/mockData.js'
 import { formatRoyales } from '../utils/formatters.js'
-import { useMockData } from '../contexts/MockDataContext.jsx'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 
 export default function AdminDashboardPage() {
-  const { alumnos, transacciones } = useMockData()
+  const { alumnos, transacciones, loading } = useSupabaseData()
 
   const activos = alumnos.filter((alumno) => alumno.activo)
   const ranking = [...alumnos].sort((a, b) => b.saldo - a.saldo)

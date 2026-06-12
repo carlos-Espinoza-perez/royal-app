@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import Modal from './Modal.jsx';
-import { useMockData } from '../contexts/MockDataContext.jsx';
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx';
 import { useToast } from '../contexts/ToastContext.jsx';
+import { useConfirm } from '../contexts/ConfirmContext.jsx';
 import { formatDate, formatRoyales } from '../utils/formatters.js';
 import { Trash2, Edit2, CheckCircle, XCircle } from 'lucide-react';
 
 export default function TransactionDetailModal({ transaccion, isOpen, onClose }) {
-  const { deleteTransaccion, editTransaccion } = useMockData();
+  const { deleteTransaccion, editTransaccion } = useSupabaseData();
   const { showToast } = useToast();
+  const confirm = useConfirm();
   
   const [isEditing, setIsEditing] = useState(false);
   const [monto, setMonto] = useState('');
@@ -29,8 +31,14 @@ export default function TransactionDetailModal({ transaccion, isOpen, onClose })
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   const isEditable = diffDays <= 14;
 
-  const handleDelete = () => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta transacción? Esta acción revertirá el saldo del alumno.')) {
+  const handleDelete = async () => {
+    const isConfirmed = await confirm('¿Estás seguro de que deseas eliminar esta transacción? Esta acción revertirá el saldo del alumno.', {
+      title: 'Eliminar Transacción',
+      confirmText: 'Sí, eliminar',
+      isDestructive: true
+    });
+    
+    if (isConfirmed) {
       deleteTransaccion(transaccion.id);
       showToast('Transacción eliminada con éxito');
       onClose();

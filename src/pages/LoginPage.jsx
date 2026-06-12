@@ -1,15 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Crown, KeyRound, Mail, Shield } from 'lucide-react'
+import { Crown, KeyRound, Mail, Shield, AlertTriangle } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('maestro@royaltreasury.app')
+  const { login, user } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [focused, setFocused] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  function handleSubmit(event) {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) navigate('/admin')
+  }, [user, navigate])
+
+  async function handleSubmit(event) {
     event.preventDefault()
-    navigate('/admin')
+    setError('')
+    setIsLoading(true)
+    
+    try {
+      await login(email, password)
+      navigate('/admin')
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión. Verifica tus credenciales.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -51,7 +71,7 @@ export default function LoginPage() {
           <div style={{ textAlign: 'center', color: '#fff' }}>
             <span style={{
               display: 'block',
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: '0.65rem',
               fontWeight: 600,
               letterSpacing: '0.2em',
@@ -62,7 +82,7 @@ export default function LoginPage() {
               Acceso reservado
             </span>
             <h1 style={{
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: 'clamp(1.8rem, 8vw, 2.6rem)',
               fontWeight: 700,
               lineHeight: 1.1,
@@ -73,7 +93,7 @@ export default function LoginPage() {
               backgroundClip: 'text'
             }}>Royal Treasury</h1>
             <p style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: '1rem',
               fontStyle: 'italic',
               color: 'rgba(255,255,255,0.65)',
@@ -98,7 +118,7 @@ export default function LoginPage() {
         }}>
           <div style={{ marginBottom: '1.5rem' }}>
             <span style={{
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: '0.6rem',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
@@ -107,7 +127,7 @@ export default function LoginPage() {
               marginBottom: '0.25rem'
             }}>Maestro administrador</span>
             <h2 style={{
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: '1.3rem',
               fontWeight: 600,
               color: '#fff',
@@ -117,10 +137,28 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
 
+            {error && (
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '8px',
+                padding: '0.75rem',
+                color: '#fca5a5',
+                fontSize: '0.8rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontFamily: "'Poppins', sans-serif"
+              }}>
+                <AlertTriangle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
             {/* Email field */}
             <label style={{ display: 'grid', gap: '0.4rem' }}>
               <span style={{
-                fontFamily: "'Cinzel', serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontSize: '0.65rem',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
@@ -144,10 +182,11 @@ export default function LoginPage() {
                   onFocus={() => setFocused('email')}
                   onBlur={() => setFocused('')}
                   type="email"
+                  placeholder="admin@correo.com"
                   style={{
                     width: '100%', border: 0, outline: 0,
                     background: 'transparent', color: '#fff',
-                    fontFamily: "'Cormorant Garamond', serif",
+                    fontFamily: "'Poppins', sans-serif",
                     fontSize: '1rem'
                   }}
                 />
@@ -157,7 +196,7 @@ export default function LoginPage() {
             {/* Password field */}
             <label style={{ display: 'grid', gap: '0.4rem' }}>
               <span style={{
-                fontFamily: "'Cinzel', serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontSize: '0.65rem',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
@@ -176,14 +215,16 @@ export default function LoginPage() {
               }}>
                 <KeyRound size={16} color={focused === 'pass' ? 'var(--accent-500)' : 'rgba(255,255,255,0.4)'} style={{ flexShrink: 0, transition: 'color 200ms' }} />
                 <input
-                  defaultValue="royales-demo"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => setFocused('pass')}
                   onBlur={() => setFocused('')}
                   type="password"
+                  placeholder="••••••••"
                   style={{
                     width: '100%', border: 0, outline: 0,
                     background: 'transparent', color: '#fff',
-                    fontFamily: "'Cormorant Garamond', serif",
+                    fontFamily: "'Poppins', sans-serif",
                     fontSize: '1rem'
                   }}
                 />
@@ -198,13 +239,14 @@ export default function LoginPage() {
                 width: '100%',
                 justifyContent: 'center',
                 marginTop: '0.5rem',
-                fontFamily: "'Cinzel', serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontSize: '0.85rem',
                 letterSpacing: '0.1em',
                 minHeight: '52px'
               }}
+              disabled={isLoading}
             >
-              Ingresar al Tesoro
+              {isLoading ? 'Ingresando...' : 'Ingresar al Tesoro'}
             </button>
 
             {/* Divider */}
@@ -214,12 +256,12 @@ export default function LoginPage() {
             }}>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
               <small style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '0.8rem',
                 color: 'rgba(255,255,255,0.4)'
               }}>
-                Demo con datos de prueba
+                Solo personal autorizado
               </small>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
             </div>

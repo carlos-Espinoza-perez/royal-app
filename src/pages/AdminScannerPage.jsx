@@ -3,12 +3,12 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import AdminShell from '../layouts/AdminShell.jsx';
 import AcreditarForm from '../components/AcreditarForm.jsx';
 import Modal from '../components/Modal.jsx';
-import { useMockData } from '../contexts/MockDataContext.jsx';
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx';
 import { useToast } from '../contexts/ToastContext.jsx';
 import { AlertTriangle } from 'lucide-react';
 
 export default function AdminScannerPage() {
-  const { alumnos, transacciones, addTransaccion } = useMockData();
+  const { alumnos, transacciones, addTransaccion, saveAsistencia, loading } = useSupabaseData();
   const { showToast } = useToast();
   
   const [scannedAlumno, setScannedAlumno] = useState(null);
@@ -25,9 +25,9 @@ export default function AdminScannerPage() {
       // 2. Plain number: RT-2026-001           (legacy fallback)
       let alumno = null;
 
-      const urlMatch = rawValue.match(/\/alumno\/(\d+)/);
+      const urlMatch = rawValue.match(/\/alumno\/([a-zA-Z0-9-]+)/);
       if (urlMatch) {
-        const id = parseInt(urlMatch[1], 10);
+        const id = urlMatch[1];
         alumno = alumnos.find(a => a.id === id);
       } else {
         // Fallback: try matching by numero
@@ -64,13 +64,23 @@ export default function AdminScannerPage() {
     console.error(error);
   };
 
-  const handleAcreditarSubmit = (total, motivoText) => {
-    addTransaccion(scannedAlumno.id, 'acreditar', total, motivoText);
-    showToast(`${total} Royales acreditados a ${scannedAlumno.nombre}`);
-    
-    // Close modal and resume scanning
-    setScannedAlumno(null);
-    setTimeout(() => setIsPaused(false), 1000);
+  const handleAcreditarSubmit = async (total, motivoText) => {
+    try {
+      // 1. Acreditar los Royales
+      addTransaccion(scannedAlumno.id, 'acreditar', total, motivoText);
+      showToast(`${total} Royales acreditados a ${scannedAlumno.nombre}`);
+      
+      // 2. Registrar asistencia automática
+      const hoy = new Date().toISOString().split('T')[0];
+      await saveAsistencia(hoy, [{ alumno_id: scannedAlumno.id, presente: true }]);
+    } catch (err) {
+      console.error("Error en pase rápido:", err);
+      showToast('Ocurrió un error en el registro', 'error');
+    } finally {
+      // Close modal and resume scanning
+      setScannedAlumno(null);
+      setTimeout(() => setIsPaused(false), 1000);
+    }
   };
 
   const overrideWarning = () => {

@@ -8,12 +8,10 @@ import PublicShell from '../layouts/PublicShell.jsx'
 import { useTheme } from '../contexts/ThemeContext.jsx'
 import {
   frasesMotivacionales,
-  getAlumnoById,
   getNextRango,
   getRangoBySaldo,
-  getResumenAlumno,
-  getTransaccionesByAlumno,
 } from '../data/mockData.js'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 import { formatRoyales, getProgressToNextRank } from '../utils/formatters.js'
 
 const fadeUp = {
@@ -29,12 +27,43 @@ const stagger = {
 export default function StudentPublicPage() {
   const { id } = useParams()
   const { theme, toggleTheme } = useTheme()
-  const alumno = getAlumnoById(id)
+  const { alumnos, transacciones: allTransacciones, loading } = useSupabaseData()
+  
+  if (loading) {
+    return (
+      <PublicShell>
+        <div style={{ display: 'grid', placeItems: 'center', height: '100vh', color: 'var(--accent-500)' }}>
+          <div className="lucide-spin"><Sun size={32} /></div>
+        </div>
+      </PublicShell>
+    )
+  }
+
+  const alumno = alumnos.find(a => a.id === id)
+  
+  if (!alumno) {
+    return (
+      <PublicShell>
+        <div style={{ textAlign: 'center', paddingTop: '4rem', color: 'white' }}>
+          <h2>Expediente no encontrado</h2>
+          <p>El código QR o enlace no es válido.</p>
+        </div>
+      </PublicShell>
+    )
+  }
+
   const rango = getRangoBySaldo(alumno.saldo)
   const siguienteRango = getNextRango(alumno.saldo)
   const progreso = getProgressToNextRank(alumno.saldo, rango, siguienteRango)
-  const transacciones = getTransaccionesByAlumno(alumno.id)
-  const resumen = getResumenAlumno(alumno.id)
+  const transacciones = allTransacciones.filter(t => t.alumnoId === alumno.id)
+  
+  // Calculate stats dynamically
+  const totalAcreditado = transacciones.filter(t => t.tipo === 'acreditar').reduce((acc, t) => acc + t.monto, 0)
+  const totalDescontado = transacciones.filter(t => t.tipo !== 'acreditar').reduce((acc, t) => acc + t.monto, 0)
+  const rankingSorted = [...alumnos].sort((a, b) => b.saldo - a.saldo)
+  const posicion = rankingSorted.findIndex(a => a.id === alumno.id) + 1
+  
+  const resumen = { totalAcreditado, totalDescontado, posicion }
   const frase = frasesMotivacionales[alumno.nombre.length % frasesMotivacionales.length]
 
   return (

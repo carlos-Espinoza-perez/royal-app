@@ -3,10 +3,10 @@ import AdminShell from '../layouts/AdminShell.jsx'
 import RoyalFrame from '../components/RoyalFrame.jsx'
 import HistorialItem from '../components/HistorialItem.jsx'
 import TransactionDetailModal from '../components/TransactionDetailModal.jsx'
-import { useMockData } from '../contexts/MockDataContext.jsx'
+import { useSupabaseData } from '../contexts/SupabaseDataContext.jsx'
 
 export default function AdminTransactionsPage() {
-  const { alumnos, transacciones } = useMockData()
+  const { alumnos, transacciones, loading } = useSupabaseData()
   const [filter, setFilter] = useState('todos')
   const [selectedTx, setSelectedTx] = useState(null)
 
@@ -15,7 +15,7 @@ export default function AdminTransactionsPage() {
     .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
 
   return (
-    <AdminShell title="Historial global" eyebrow="Libro de movimientos">
+    <AdminShell backTo="/admin/ajustes" title="Historial global" eyebrow="Libro de movimientos">
       <RoyalFrame className="admin-panel">
         <div className="filter-strip" style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
           <button 

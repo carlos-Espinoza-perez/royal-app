@@ -7,9 +7,18 @@ const getInitials = (name) => {
   return name.substring(0, 2).toUpperCase();
 };
 
-export default function CarnetPreview({ alumno, baseImage }) {
+export default function CarnetPreview({ alumno, baseImage, configOverride }) {
   const [qrDataUrl, setQrDataUrl] = useState('')
+  const [localConfig, setLocalConfig] = useState(null)
   const containerRef = useRef(null)
+
+  useEffect(() => {
+    // Load config from localStorage if no override is provided
+    const saved = localStorage.getItem('royal_carnet_config')
+    if (saved) {
+      try { setLocalConfig(JSON.parse(saved)) } catch (e) {}
+    }
+  }, [])
 
   useEffect(() => {
     // Generate QR pointing to the student's personal dashboard URL
@@ -25,9 +34,15 @@ export default function CarnetPreview({ alumno, baseImage }) {
     })
       .then(url => setQrDataUrl(url))
       .catch(err => console.error(err))
-  }, [alumno.numero])
+  }, [alumno.numero, alumno.id])
 
   if (!baseImage) return null
+
+  const config = configOverride || localConfig || {
+    name: { top: 63.3, left: 50, width: 42, fontSize: 1.3 },
+    number: { top: 84.9, left: 50, width: 30, fontSize: 1.1 },
+    qr: { top: 48, left: 78.9, width: 16.2 }
+  };
 
   // Proporción estándar de Tarjeta CR80 (8.5cm x 5.5cm)
   return (
@@ -48,11 +63,11 @@ export default function CarnetPreview({ alumno, baseImage }) {
       {/* 2. Top Banner: Member Name */}
       <div style={{
         position: 'absolute',
-        top: '58.5%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '38%',
-        height: '9%',
+        top: `${config.name.top}%`,
+        left: `${config.name.left}%`,
+        transform: 'translate(-50%, -50%)',
+        width: `${config.name.width}%`,
+        height: '8%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -60,7 +75,7 @@ export default function CarnetPreview({ alumno, baseImage }) {
         <h2 style={{ 
           margin: 0, 
           fontFamily: "'Poppins', sans-serif", 
-          fontSize: '1.25rem', 
+          fontSize: `${config.name.fontSize}rem`, 
           fontWeight: 'bold',
           color: '#1f382a',
           textTransform: 'uppercase',
@@ -74,10 +89,10 @@ export default function CarnetPreview({ alumno, baseImage }) {
       {/* 3. Bottom Banner: Member Number */}
       <div style={{
         position: 'absolute',
-        top: '82%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '28%',
+        top: `${config.number.top}%`,
+        left: `${config.number.left}%`,
+        transform: 'translate(-50%, -50%)',
+        width: `${config.number.width}%`,
         height: '6%',
         display: 'flex',
         alignItems: 'center',
@@ -86,34 +101,32 @@ export default function CarnetPreview({ alumno, baseImage }) {
         <p style={{ 
           margin: 0, 
           fontFamily: "'Poppins', sans-serif", 
-          fontSize: 'calc(0.9rem + 2px)', 
+          fontSize: `${config.number.fontSize}rem`, 
           fontWeight: 800, 
           color: '#1f382a',
-          letterSpacing: '0.1em'
+          letterSpacing: '0.15em'
         }}>
           {alumno.numero}
         </p>
       </div>
 
-      {/* 4. Bottom Square: QR Code */}
+      {/* 4. Right Square: QR Code */}
       {qrDataUrl && (
         <div style={{
           position: 'absolute',
-          top: '33.5%',
-          left: '78.7%',
-          transform: 'translateX(-50%)',
-          width: '15.7%',
-          height: '29%',
+          top: `${config.qr.top}%`,
+          left: `${config.qr.left}%`,
+          transform: 'translate(-50%, -50%)',
+          width: `${config.qr.width}%`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
+          gap: '4px'
         }}>
-          <div style={{ width: '100%', height: '6px', background: 'rgb(31, 56, 42)', borderRadius: '5px', marginBottom: '2px' }}></div>
-
-          <img src={qrDataUrl} alt={`QR ${alumno.nombre}`} style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
-
-          <div style={{ width: '100%', height: '6px', background: 'rgb(31, 56, 42)', borderRadius: '5px', marginTop: '2px' }}></div>
+          <div style={{ width: '100%', height: '5px', background: '#1f382a', borderRadius: '5px' }}></div>
+          <img src={qrDataUrl} alt={`QR ${alumno.nombre}`} style={{ width: '100%', height: 'auto', aspectRatio: '1/1', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+          <div style={{ width: '100%', height: '5px', background: '#1f382a', borderRadius: '5px' }}></div>
         </div>
       )}
     </div>
