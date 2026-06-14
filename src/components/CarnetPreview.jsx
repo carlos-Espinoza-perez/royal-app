@@ -74,12 +74,11 @@ export default function CarnetPreview({ alumno, baseImage, configOverride }) {
       }}>
         <h2 style={{ 
           margin: 0, 
-          fontFamily: "'Poppins', sans-serif", 
+          fontFamily: "'Cinzel', serif", 
           fontSize: `${config.name.fontSize}rem`, 
           fontWeight: 'bold',
           color: '#1f382a',
           textTransform: 'uppercase',
-          letterSpacing: '0.05em',
           textAlign: 'center'
         }}>
           {alumno.nombre}
@@ -100,11 +99,10 @@ export default function CarnetPreview({ alumno, baseImage, configOverride }) {
       }}>
         <p style={{ 
           margin: 0, 
-          fontFamily: "'Poppins', sans-serif", 
+          fontFamily: "'Cinzel', serif", 
           fontSize: `${config.number.fontSize}rem`, 
           fontWeight: 800, 
-          color: '#1f382a',
-          letterSpacing: '0.15em'
+          color: '#1f382a'
         }}>
           {alumno.numero}
         </p>
@@ -125,7 +123,7 @@ export default function CarnetPreview({ alumno, baseImage, configOverride }) {
           gap: '4px'
         }}>
           <div style={{ width: '100%', height: '5px', background: '#1f382a', borderRadius: '5px' }}></div>
-          <img src={qrDataUrl} alt={`QR ${alumno.nombre}`} style={{ width: '100%', height: 'auto', aspectRatio: '1/1', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+          <img src={qrDataUrl} alt={`QR ${alumno.nombre}`} style={{ width: '100%', height: 'auto', aspectRatio: '1/1', objectFit: 'contain' }} />
           <div style={{ width: '100%', height: '5px', background: '#1f382a', borderRadius: '5px' }}></div>
         </div>
       )}
