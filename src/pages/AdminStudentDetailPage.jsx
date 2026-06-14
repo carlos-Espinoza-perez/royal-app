@@ -118,24 +118,22 @@ export default function AdminStudentDetailPage() {
       backTo="/admin/alumnos"
       actions={headerActions}
     >
-      <motion.div layoutId={`student-card-${alumno.id}`}>
-        <RoyalFrame className="admin-panel detail-panel" style={{ background: 'var(--surface)' }}>
-          <div className="detail-hero">
-            <div className="avatar-large">{alumno.nombre.slice(0, 1)}</div>
-            <div>
-              <span>{alumno.numero}</span>
-              <h2>{formatRoyales(alumno.saldo)} Royales</h2>
-              <RangoInsignia rango={getRangoBySaldo(alumno.saldo)} />
-            </div>
+      <RoyalFrame className="admin-panel detail-panel" style={{ background: 'var(--surface)' }}>
+        <div className="detail-hero">
+          <div className="avatar-large">{alumno.nombre.slice(0, 1)}</div>
+          <div>
+            <span>{alumno.numero}</span>
+            <h2>{formatRoyales(alumno.saldo)} Royales</h2>
+            <RangoInsignia rango={getRangoBySaldo(alumno.saldo)} />
           </div>
-          <div className="action-grid">
-            <button className="royal-button" onClick={() => setActiveModal('acreditar')}><BadgePlus size={16} /> Acreditar</button>
-            <button className="royal-button" onClick={() => setActiveModal('sancionar')}><ShieldMinus size={16} /> Sancionar</button>
-            <button className="royal-button" onClick={() => setActiveModal('canjear')}><Gift size={16} /> Canjear</button>
-            <button className="royal-button" onClick={handleOpenQR}><QrCode size={16} /> Ver QR</button>
-          </div>
-        </RoyalFrame>
-      </motion.div>
+        </div>
+        <div className="action-grid">
+          <button className="royal-button" onClick={() => setActiveModal('acreditar')}><BadgePlus size={16} /> Acreditar</button>
+          <button className="royal-button" onClick={() => setActiveModal('sancionar')}><ShieldMinus size={16} /> Sancionar</button>
+          <button className="royal-button" onClick={() => setActiveModal('canjear')}><Gift size={16} /> Canjear</button>
+          <button className="royal-button" onClick={handleOpenQR}><QrCode size={16} /> Ver QR</button>
+        </div>
+      </RoyalFrame>
 
       <RoyalFrame className="admin-panel">
         <div className="section-title"><h2>Historial del alumno</h2></div>
