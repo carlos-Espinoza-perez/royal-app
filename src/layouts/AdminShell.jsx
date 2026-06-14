@@ -23,14 +23,7 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
   }
 
   return (
-    <motion.main 
-      className="admin-shell"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
-    >
+    <main className="admin-shell">
       <aside className="admin-sidebar">
         <div className="user-greeting-header">
           <div className="user-greeting-profile">
@@ -63,7 +56,13 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
           })}
         </nav>
       </aside>
-      <section className="admin-content">
+      <motion.section 
+        className="admin-content"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         <header className="admin-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {backTo && (
@@ -79,7 +78,7 @@ export default function AdminShell({ title, eyebrow, children, actions, backTo }
           {actions ? <div className="admin-actions">{actions}</div> : null}
         </header>
         {children}
-      </section>
-    </motion.main>
+      </motion.section>
+    </main>
   )
 }
