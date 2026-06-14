@@ -129,7 +129,7 @@ export default function AdminCardsPage() {
     <AdminShell backTo="/admin/ajustes" title="Generador de carnets" eyebrow="Identificación oficial">
       {/* Hidden container for PDF rendering */}
       <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', pointerEvents: 'none' }}>
-        <div ref={previewContainerRef} style={{ display: 'flex', gap: '20px' }}>
+        <div ref={previewContainerRef} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {selectedList.map(alumno => (
             <CarnetPreview key={alumno.id} alumno={alumno} baseImage={baseImage} />
           ))}
